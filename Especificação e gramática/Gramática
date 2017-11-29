@@ -1,0 +1,92 @@
+S = 'func' LDeclFunc 'end' 'int' 'main' '(' LDeclArgs ')' '{' FuncBody '}' 
+
+LDeclFunc = DeclFunc LDeclFunc
+LDeclFunc = &
+
+DeclFunc = Decl '(' LDeclArgs ')' '{' FuncBody '}'
+
+LDeclArgs = Decl LDeclArgsT 
+LDeclArgs = &
+LDeclArgsT = ',' Decl LDeclArgsT
+LDeclArgsT = &
+
+FuncBody = 'decl' LDecl 'end' LInstruc
+
+LDecl = Decl ‘;’ LDecl
+LDecl = &	
+
+Decl = Type tkId 
+Decl = 'array' Type '[' cInt ']' tkId
+
+LInstruc = Instruc LInstruc
+LInstruc = &
+
+Instruc = tkId '=' Es ';'
+Instruc = Func ';'
+Instruc = 'while' '(' Es ')' '{' LInstruc '}'
+Instruc = 'for' '(' tkId ':' Es ',' Es ')' '{' LInstruc '}'
+Instruc = 'return' Value ';'
+Instruc = 'if' '(' Es ')' '{' LInstruc '}' CondElse
+
+CondElse = 'else' '{' LInstruc }
+CondElse = &
+
+Es = Eb Esr
+Esr = '#' Eb Esr
+Esr = &
+
+Eb = Tb Ebr
+Ebr = '|' Tb Ebr
+Ebr = &
+
+Tb = Fb Tbr
+Tbr = '&' Fb Tbr
+Tbr = &
+
+Fb = '!' Fb
+Fb = Ec
+
+Ec = Ea Opc Ea
+Ec = Ea
+
+Ea = Er Ear
+Ear = Opa Er Ear
+Ear = &
+
+Er = Ta Err
+Err = '%' Ta Err
+Err = &
+
+Ta = Fa Tar
+Tar = Opm Fa Tar
+Tar = &
+
+Fa = '~' Fa
+Fa = '(' Es ')'
+Fa = Value
+
+Func = tkId ‘(‘ LArgs ’)’
+
+LArgs = Value LArgsT 
+LArgs = &
+LArgsT = ',' Value LArgsT
+LArgsT = &
+
+Value = tkId
+Value = tkId '[' Es ']'
+Value = Func
+Value = cInt
+Value = cFloat
+Value = cChar
+Value = cString
+Value = cBool
+
+Type = 'int'
+Type = 'float'
+Type = 'string'
+Type = 'char'
+Type = 'bool' 
+
+
+
+

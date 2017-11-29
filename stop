@@ -1,0 +1,417 @@
+[1mdiff --git "a/Analizador L\303\251xico/src/analisaLex/Analisador.java" "b/Analizador L\303\251xico/src/analisaLex/Analisador.java"[m
+[1mdeleted file mode 100644[m
+[1mindex 895aada..0000000[m
+[1m--- "a/Analizador L\303\251xico/src/analisaLex/Analisador.java"[m	
+[1m+++ /dev/null[m
+[36m@@ -1,197 +0,0 @@[m
+[31m-package analisaLex;[m
+[31m-import java.io.BufferedReader;[m
+[31m-import java.io.FileNotFoundException;[m
+[31m-import java.io.FileReader;[m
+[31m-import java.io.IOException;[m
+[31m-import java.util.ArrayList;[m
+[31m-[m
+[31m-[m
+[31m-public class Analisador{ [m
+[31m-	private static ArrayList<Token> output = new ArrayList<Token>();[m
+[31m-	private boolean palavraIniciada = false;[m
+[31m-	private String strLinha = "";[m
+[31m-	private String strPalavraAtual = "";[m
+[31m-	private String charAtual = "";[m
+[31m-	private String charInicial = "";[m
+[31m-	private int colInicial = 0;[m
+[31m-	private int colAtual = 0;[m
+[31m-	private int linha = 0;[m
+[31m-[m
+[31m-	[m
+[31m-	private void iniciaPalavra() {[m
+[31m-		charAtual = String.valueOf(strLinha.charAt(colAtual));[m
+[31m-		charInicial = charAtual;[m
+[31m-		strPalavraAtual = ""+charInicial;[m
+[31m-		palavraIniciada = true;[m
+[31m-		colInicial = colAtual;[m
+[31m-	}[m
+[31m-	[m
+[31m-	private void finalizaPalavra() {[m
+[31m-		charInicial = "";[m
+[31m-		strPalavraAtual = "";[m
+[31m-		palavraIniciada = false;[m
+[31m-		[m
+[31m-	}[m
+[31m-	[m
+[31m-	private String proxChar() {[m
+[31m-		colAtual++;[m
+[31m-		if(colAtual >= strLinha.length())[m
+[31m-			return "";[m
+[31m-		charAtual = String.valueOf(strLinha.charAt(colAtual));[m
+[31m-		return charAtual;[m
+[31m-	}[m
+[31m-	[m
+[31m-	private boolean hasNextChar() {[m
+[31m-		if(colAtual + 1 >= strLinha.length())[m
+[31m-			return false;[m
+[31m-		return true;		[m
+[31m-	}[m
+[31m-	[m
+[31m-	public void analizerCharByChar(String strLin, int lin) {[m
+[31m-		palavraIniciada = false;[m
+[31m-		strLinha = strLin;[m
+[31m-		strPalavraAtual = "";[m
+[31m-		colInicial = 0;[m
+[31m-		colAtual = 0;[m
+[31m-		linha = lin;[m
+[31m-		charAtual = String.valueOf(strLinha.charAt(colAtual));[m
+[31m-		charInicial = "";[m
+[31m-	[m
+[31m-		while( colAtual < strLinha.length()) {[m
+[31m-			//pula caracteres brancos e tabulações[m
+[31m-			if(charAtual.matches("(\\t| )*")) {[m
+[31m-				proxChar();[m
+[31m-				finalizaPalavra();//mesmo que não iniciar a palavra[m
+[31m-				continue;[m
+[31m-			}[m
+[31m-			[m
+[31m-			//inicialização da palavra[m
+[31m-			if(!palavraIniciada) {[m
+[31m-				iniciaPalavra();[m
+[31m-			}[m
+[31m-			[m
+[31m-			if(charAtual.matches("[A-Z]|[a-z]")) {[m
+[31m-				proxChar();[m
+[31m-[m
+[31m-				while(charAtual.matches("[A-Z]|[a-z]|[0-9]")) {[m
+[31m-					strPalavraAtual += charAtual;[m
+[31m-					proxChar();[m
+[31m-				}[m
+[31m-				[m
+[31m-				if(TokensMap.getToken(strPalavraAtual)!=null) {[m
+[31m-					output.add(new Token(linha, colInicial, TokensMap.getToken(strPalavraAtual), strPalavraAtual));[m
+[31m-				}[m
+[31m-				else {[m
+[31m-					output.add(new Token(linha, colInicial, CategoriaToken.tkId, strPalavraAtual));[m
+[31m-				}[m
+[31m-[m
+[31m-				finalizaPalavra();[m
+[31m-				continue;[m
+[31m-				[m
+[31m-			}[m
+[31m-			if(charAtual.matches("[0-9]")) {[m
+[31m-				proxChar();[m
+[31m-				[m
+[31m-				while(charAtual.matches("[0-9|\\.]")) {[m
+[31m-					strPalavraAtual += charAtual;[m
+[31m-					proxChar();[m
+[31m-				}[m
+[31m-				[m
+[31m-				if(strPalavraAtual.matches("[0-9]+")) {[m
+[31m-					output.add(new Token(linha, colInicial, CategoriaToken.cInt, strPalavraAtual));[m
+[31m-				}[m
+[31m-				else if(strPalavraAtual.matches("[0-9]+\\.[0-9]+")) {[m
+[31m-					output.add(new Token(linha, colInicial, CategoriaToken.cFloat, strPalavraAtual));[m
+[31m-				} [m
+[31m-				else {[m
+[31m-					System.err.println("linha=" +linha+"    coluna="+colInicial+"    dt"+strPalavraAtual);[m
+[31m-				}[m
+[31m-				[m
+[31m-				finalizaPalavra();[m
+[31m-				continue;[m
+[31m-			}[m
+[31m-			[m
+[31m-			//caso caractere especial[m
+[31m-			if(charAtual.matches("[^0-9A-Za-z]")) {[m
+[31m-				strPalavraAtual += proxChar();[m
+[31m-				//tokens com dois caracteres[m
+[31m-				switch(strPalavraAtual) {[m
+[31m-					case "==":[m
+[31m-					case "!=":[m
+[31m-					case ">=":[m
+[31m-					case "<=":[m
+[31m-						finalizaPalavra();[m
+[31m-						output.add(new Token(linha, colInicial, TokensMap.getToken(strPalavraAtual), strPalavraAtual));[m
+[31m-						proxChar();[m
+[31m-						continue;[m
+[31m-					case "//":[m
+[31m-						output.add(new Token(linha, colInicial, TokensMap.getToken(strPalavraAtual), strPalavraAtual));[m
+[31m-						return;[m
+[31m-				}[m
+[31m-				//tokens com um caractere, nesse momento a strPalavraAtual tem tamanho 2, charInicial e charAtual[m
+[31m-				switch(charInicial) {[m
+[31m-					case "\"":[m
+[31m-						while(!charAtual.equals("\"") && hasNextChar()) {[m
+[31m-							strPalavraAtual += proxChar();[m
+[31m-						}[m
+[31m-						if(charAtual.equals("\"")) {[m
+[31m-							output.add(new Token(linha, colInicial, CategoriaToken.cString, strPalavraAtual));[m
+[31m-						}[m
+[31m-						else {[m
+[31m-							System.err.println("provavel erro de literal string");[m
+[31m-						}[m
+[31m-						finalizaPalavra();[m
+[31m-						proxChar();[m
+[31m-						break;[m
+[31m-					case "'":[m
+[31m-						while(!charAtual.equals("'") && hasNextChar()) {[m
+[31m-							strPalavraAtual += proxChar();[m
+[31m-						}[m
+[31m-						if(charAtual.equals("'")) {[m
+[31m-							output.add(new Token(linha, colInicial, CategoriaToken.cChar, strPalavraAtual));[m
+[31m-						}[m
+[31m-						else {[m
+[31m-							System.err.println("provavel erro de literal string");[m
+[31m-						}[m
+[31m-						finalizaPalavra();[m
+[31m-						proxChar();[m
+[31m-						break;[m
+[31m-						[m
+[31m-					default:[m
+[31m-						if( TokensMap.getToken(charInicial) != null)[m
+[31m-							output.add(new Token(linha, colInicial, TokensMap.getToken(charInicial), charInicial));[m
+[31m-						else[m
+[31m-							System.err.println("provavel erro de caractere não permitido["+charInicial+"]");[m
+[31m-						finalizaPalavra();[m
+[31m-				}	[m
+[31m-			}			[m
+[31m-		}[m
+[31m-	}[m
+[31m-	[m
+[31m-	public static void analise() {[m
+[31m-		[m
+[31m-		try {[m
+[31m-			FileReader arq = new FileReader("/home/lucas/test/hello.txt");[m
+[31m-			BufferedReader lerArq = new BufferedReader(arq);[m
+[31m-			String linha = lerArq.readLine();[m
+[31m-			Analisador analizer = new Analisador();[m
+[31m-			int lin = 0;[m
+[31m-			while(linha != null){[m
+[31m-				lin++;[m
+[31m-				analizer.analizerCharByChar( linha, lin);[m
+[31m-				linha = lerArq.readLine();[m
+[31m-			}[m
+[31m-			lerArq.close();	[m
+[31m-		} catch(FileNotFoundException e) {[m
+[31m-			System.out.println("erro file not found");[m
+[31m-			return;[m
+[31m-		} catch(IOException e) {[m
+[31m-			System.out.println("erro io");[m
+[31m-			return;[m
+[31m-		} [m
+[31m-		for(Token t: output) {[m
+[31m-			System.out.println(t);[m
+[31m-		}[m
+[31m-	}	[m
+[31m-}[m
+[31m-[m
+[1mdiff --git "a/Analizador L\303\251xico/src/analisaLex/CategoriaToken.java" "b/Analizador L\303\251xico/src/analisaLex/CategoriaToken.java"[m
+[1mdeleted file mode 100644[m
+[1mindex 30db11d..0000000[m
+[1m--- "a/Analizador L\303\251xico/src/analisaLex/CategoriaToken.java"[m	
+[1m+++ /dev/null[m
+[36m@@ -1,45 +0,0 @@[m
+[31m-package analisaLex;[m
+[31m-	public enum CategoriaToken {[m
+[31m-    	tkMain,[m
+[31m-        tkId,[m
+[31m-        tkComent,[m
+[31m-        tkTerm,[m
+[31m-        sepVir,[m
+[31m-        sepPon,[m
+[31m-        escFunc,[m
+[31m-        escDecl,[m
+[31m-        escEnd,[m
+[31m-        blkBegin,[m
+[31m-        blkEnd,[m
+[31m-        parBegin,[m
+[31m-        parEnd,[m
+[31m-        arrBegin,[m
+[31m-        arrEnd,[m
+[31m-        tInt,[m
+[31m-        tFloat,[m
+[31m-        tChar,[m
+[31m-        tBool,[m
+[31m-        tString,[m
+[31m-        tArray,[m
+[31m-        eIf,[m
+[31m-        eElse,[m
+[31m-        eFor,[m
+[31m-        eWhile,[m
+[31m-        cInt,[m
+[31m-        cFloat,[m
+[31m-        cChar,[m
+[31m-        cBool,[m
+[31m-        cString,[m
+[31m-		opMenUn,[m
+[31m-        opAdi,[m
+[31m-        opMul,[m
+[31m-        opRes,[m
+[31m-        opComp,[m
+[31m-        opIgua,[m
+[31m-        opNeg,[m
+[31m-        opConj,[m
+[31m-        opDisj,[m
+[31m-        opConc,[m
+[31m-        [m
+[31m-        tkAtr[m
+[31m-    }[m
+[1mdiff --git "a/Analizador L\303\251xico/src/analisaLex/Token.java" "b/Analizador L\303\251xico/src/analisaLex/Token.java"[m
+[1mdeleted file mode 100644[m
+[1mindex 730dae0..0000000[m
+[1m--- "a/Analizador L\303\251xico/src/analisaLex/Token.java"[m	
+[1m+++ /dev/null[m
+[36m@@ -1,21 +0,0 @@[m
+[31m-package analisaLex;[m
+[31m-[m
+[31m-[m
+[31m-public class Token {[m
+[31m-	private int linha;[m
+[31m-	private int coluna;[m
+[31m-	private String nome;[m
+[31m-	private CategoriaToken categoria;[m
+[31m-[m
+[31m-	public Token(int linha, int coluna,CategoriaToken categoria, String nome) {[m
+[31m-		this.linha = linha;[m
+[31m-		this.coluna = coluna;[m
+[31m-		this.categoria = categoria;[m
+[31m-		this.nome = nome;[m
+[31m-	}[m
+[31m-[m
+[31m-	@Override[m
+[31m-	public String toString(){[m
+[31m-		return "("+linha+","+coluna+")"+"<"+categoria+","+nome+">";[m
+[31m-	}[m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git "a/Analizador L\303\251xico/src/analisaLex/TokensMap.java" "b/Analizador L\303\251xico/src/analisaLex/TokensMap.java"[m
+[1mdeleted file mode 100644[m
+[1mindex 84cf295..0000000[m
+[1m--- "a/Analizador L\303\251xico/src/analisaLex/TokensMap.java"[m	
+[1m+++ /dev/null[m
+[36m@@ -1,60 +0,0 @@[m
+[31m-package analisaLex;[m
+[31m-import java.util.HashMap;[m
+[31m-[m
+[31m-public class TokensMap {[m
+[31m-	private static HashMap<String, CategoriaToken> map = new HashMap<String, CategoriaToken>();[m
+[31m-	static {[m
+[31m-		map.put("main", CategoriaToken.tkMain);[m
+[31m-		map.put("//", CategoriaToken.tkComent);[m
+[31m-		map.put(";", CategoriaToken.tkTerm);[m
+[31m-		map.put(",", CategoriaToken.sepVir);[m
+[31m-		map.put(":", CategoriaToken.sepPon);[m
+[31m-		map.put("func", CategoriaToken.escFunc);[m
+[31m-		map.put("decl", CategoriaToken.escDecl);[m
+[31m-		map.put("end", CategoriaToken.escEnd);[m
+[31m-		map.put("{", CategoriaToken.blkBegin);[m
+[31m-		map.put("}", CategoriaToken.blkEnd);[m
+[31m-		map.put("(", CategoriaToken.parBegin);[m
+[31m-		map.put(")", CategoriaToken.parEnd);[m
+[31m-		map.put("[", CategoriaToken.arrBegin);[m
+[31m-		map.put("]", CategoriaToken.arrEnd);[m
+[31m-		map.put("int", CategoriaToken.tInt);[m
+[31m-		map.put("float", CategoriaToken.tFloat);[m
+[31m-		map.put("char", CategoriaToken.tChar);[m
+[31m-		map.put("bool", CategoriaToken.tBool);[m
+[31m-		map.put("string", CategoriaToken.tString);[m
+[31m-		map.put("array", CategoriaToken.tArray);[m
+[31m-		map.put("if", CategoriaToken.eIf);[m
+[31m-		map.put("else", CategoriaToken.eElse);[m
+[31m-		map.put("for", CategoriaToken.eFor);[m
+[31m-		map.put("while", CategoriaToken.eWhile);	[m
+[31m-		map.put("true", CategoriaToken.cBool);[m
+[31m-		map.put("false", CategoriaToken.cBool);[m
+[31m-		map.put("~", CategoriaToken.opMenUn);[m
+[31m-		map.put("+", CategoriaToken.opAdi);[m
+[31m-		map.put("-", CategoriaToken.opAdi);[m
+[31m-		map.put("*", CategoriaToken.opMul);[m
+[31m-		map.put("/", CategoriaToken.opMul);[m
+[31m-		map.put("%", CategoriaToken.opRes);[m
+[31m-		map.put("<", CategoriaToken.opComp);[m
+[31m-		map.put(">", CategoriaToken.opComp);[m
+[31m-		map.put("<=", CategoriaToken.opComp);[m
+[31m-		map.put(">=", CategoriaToken.opComp);[m
+[31m-		map.put("==", CategoriaToken.opIgua);[m
+[31m-		map.put("!=", CategoriaToken.opIgua);[m
+[31m-		map.put("!", CategoriaToken.opNeg);[m
+[31m-		map.put("&", CategoriaToken.opConj);[m
+[31m-		map.put("|", CategoriaToken.opDisj);[m
+[31m-		map.put("#", CategoriaToken.opConc);[m
+[31m-		[m
+[31m-		map.put("=", CategoriaToken.tkAtr);[m
+[31m-		[m
+[31m-	}[m
+[31m-	[m
+[31m-	public static CategoriaToken getToken(String nome) {[m
+[31m-		return map.get(nome);[m
+[31m-	}[m
+[31m-	[m
+[31m-	[m
+[31m-	[m
+[31m-}[m
+[1mdiff --git "a/Analizador L\303\251xico/src/auxiliar/StringStruct.java" "b/Analizador L\303\251xico/src/auxiliar/StringStruct.java"[m
+[1mdeleted file mode 100644[m
+[1mindex fb96808..0000000[m
+[1m--- "a/Analizador L\303\251xico/src/auxiliar/StringStruct.java"[m	
+[1m+++ /dev/null[m
+[36m@@ -1,47 +0,0 @@[m
+[31m-package auxiliar;[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-/*[m
+[31m- Classe que salva uma string e marca sua posição inicial e final[m
+[31m- */[m
+[31m-public class StringStruct {[m
+[31m-	private String str;[m
+[31m-	private int PosIni;[m
+[31m-	private int PosFin;[m
+[31m-	[m
+[31m-	public StringStruct(String str, int PosIni){[m
+[31m-		this.str = str;[m
+[31m-		this.PosIni = PosIni;[m
+[31m-		this.PosFin = PosIni + str.length();[m
+[31m-	}[m
+[31m-	[m
+[31m-	public String getStr() {[m
+[31m-		return str;[m
+[31m-	}[m
+[31m-[m
+[31m-	public void setStr(String str) {[m
+[31m-		this.str = str;[m
+[31m-	}[m
+[31m-[m
+[31m-	public int getPosIni() {[m
+[31m-		return PosIni;[m
+[31m-	}[m
+[31m-[m
+[31m-	public void setPosIni(int posIni) {[m
+[31m-		PosIni = posIni;[m
+[31m-	}[m
+[31m-[m
+[31m-	public int getPosFin() {[m
+[31m-		return PosFin;[m
+[31m-	}[m
+[31m-[m
+[31m-	public void setPosFin(int posFin) {[m
+[31m-		PosFin = posFin;[m
+[31m-	}[m
+[31m-[m
+[31m-	@Override[m
+[31m-	public String toString() {[m
+[31m-		return str+" Inicio:"+PosIni+" Final:"+PosFin;[m
+[31m-	}[m
+[31m-}[m
+[1mdiff --git "a/Analizador L\303\251xico/src/main/Main.java" "b/Analizador L\303\251xico/src/main/Main.java"[m
+[1mdeleted file mode 100644[m
+[1mindex d2735ae..0000000[m
+[1m--- "a/Analizador L\303\251xico/src/main/Main.java"[m	
+[1m+++ /dev/null[m
+[36m@@ -1,10 +0,0 @@[m
+[31m-package main;[m
+[31m-import analisaLex.Analisador;[m
+[31m-[m
+[31m-public class Main {[m
+[31m-	[m
+[31m-	public static void main(String args[]){[m
+[31m-		Analisador.analise();[m
+[31m-	}[m
+[31m-[m
+[31m-}[m

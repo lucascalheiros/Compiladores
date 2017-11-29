@@ -1,0 +1,83 @@
+S = ‘func:’ LDeclFunc 'end;' 'int' 'main' '(' LDeclArgs ')' '{' FuncBody '}' 
+
+LDeclFunc = DeclFunc LDeclFunc
+LDeclFunc = &
+
+DeclFunc = Decl '(' LDeclArgs ')' '{' FuncBody '}'
+
+LDeclArgs = Decl LDeclArgsT 
+LDeclArgs = &
+LDeclArgsT = ',' Decl LDeclArgsT
+LDeclArgsT = &
+
+FuncBody = ‘decl:’ LDecl 'end;' LInstruc
+
+LDecl = Decl ‘;’ LDecl
+LDecl = &	
+
+Decl = Type NameID 
+Decl = 'array' Type '[' Es ']' NameID
+
+LInstruc = Instruc LInstruc
+LInstruc = &
+
+Instruc = NameID '=' Es ';'
+Instruc = 'while' '(' Es ')' '{' LInstruc '}'
+Instruc = 'for' '(' NameID ':' Es ',' Es ')' '{' LInstruc '}'
+Instruc = 'return' Value ';'
+Instruc = 'if' '(' Es ')' '{' LInstruc '}' CondElse
+
+CondElse = 'else' '{' LInstruc }
+CondElse = &
+
+Es = Eb Esr
+Esr = '#' Eb Esr
+Esr = &
+
+Eb = Tb Ebr
+Ebr = '|' Tb Ebr
+Ebr = &
+
+Tb = Fb Tbr
+Tbr = '&' Fb Tbr
+Tbr = &
+
+Fb = '!' Fb
+Fb = Ec
+
+Ec = Ea Opc Ea
+Ec = Ea
+
+Ea = Ta Ear
+Ear = Opa Ta Ear
+Ear = &
+
+Ta = Fa Tar
+Tar = Opm Fa Tar
+Tar = &
+
+Fa = '~' Fa
+Fa = '(' Es ')'
+Fa = Value
+
+Func = NameID ‘(‘ LArgs ’)’
+
+LArgs = Value LArgsT 
+LArgs = &
+LArgsT = ',' Value LArgsT
+LArgsT = &
+
+Value = NameID
+Value = Func
+Value = NameID '[' Es ']'
+Value = ConstInt
+Value = ConstFloat
+Value = ConstString
+Value = ConstChar
+Value = ConstBool
+
+Type = 'int' | 'float' | 'string' | 'char' | 'bool' 
+
+
+
+
