@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 
 public class Lexico{ 
-	private static ArrayList<Token> output = new ArrayList<Token>();
+	private ArrayList<Token> output = new ArrayList<Token>();
 	private boolean palavraIniciada = false;
 	private String strLinha = "";
 	private String strPalavraAtual = "";
@@ -58,9 +58,11 @@ public class Lexico{
 		charAtual = String.valueOf(strLinha.charAt(colAtual));
 		charInicial = "";
 	
-		while( colAtual < strLinha.length()) {
+		while( colAtual < strLinha.length() ) {
+
 			//pula caracteres brancos e tabulações
 			if(charAtual.matches("(\\t| )*")) {
+
 				proxChar();
 				finalizaPalavra();//mesmo que não iniciar a palavra
 				continue;
@@ -68,17 +70,18 @@ public class Lexico{
 			
 			//inicialização da palavra
 			if(!palavraIniciada) {
+
 				iniciaPalavra();
 			}
 			
 			if(charAtual.matches("[A-Z]|[a-z]")) {
 				proxChar();
 
-				while(charAtual.matches("[A-Z]|[a-z]|[0-9]")) {
+				while(charAtual.matches("[A-Z]|[a-z]|[0-9]") && colAtual < strLinha.length() ) {
 					strPalavraAtual += charAtual;
 					proxChar();
 				}
-				
+
 				if(TokensMap.getToken(strPalavraAtual)!=null) {
 					output.add(new Token(linha, colInicial, TokensMap.getToken(strPalavraAtual), strPalavraAtual));
 				}
@@ -175,11 +178,10 @@ public class Lexico{
 			FileReader arq = new FileReader(path);
 			BufferedReader lerArq = new BufferedReader(arq);
 			String linha = lerArq.readLine();
-			Lexico analizer = new Lexico();
 			int lin = 0;
 			while(linha != null){
 				lin++;
-				analizer.lineAnalise( linha, lin);
+				this.lineAnalise( linha, lin);
 				linha = lerArq.readLine();
 			}
 			lerArq.close();	

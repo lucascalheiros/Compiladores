@@ -1,0 +1,29 @@
+func
+      int fibonacci(int n) {
+          decl
+              int i;
+              int j;
+              int k;
+              int t;
+          end
+          i = 0;
+          j = 1;
+          Print(""#j);
+          while( j < n ) {	
+              t = i + j;
+              i = j;
+              j = t;
+              Print(", "#j);
+          }
+      return j;	
+      }
+    end
+    
+    int main() {
+        decl
+            int n;
+        end
+        n = Read("int");
+        n = fibonacci(n);
+        return n;
+    }

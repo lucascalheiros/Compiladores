@@ -1,0 +1,7 @@
+func
+end
+int main () {
+decl
+end
+Print("Hello World");
+}

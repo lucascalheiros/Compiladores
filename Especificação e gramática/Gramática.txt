@@ -21,12 +21,14 @@ Decl = 'array' Type '[' cInt ']' tkId
 LInstruc = Instruc LInstruc
 LInstruc = &
 
-Instruc = tkId '=' Es ';'
-Instruc = Func ';'
+Instruc = tkId AtrbFun ';'
 Instruc = 'while' '(' Es ')' '{' LInstruc '}'
 Instruc = 'for' '(' tkId ':' Es ',' Es ')' '{' LInstruc '}'
 Instruc = 'return' Value ';'
 Instruc = 'if' '(' Es ')' '{' LInstruc '}' CondElse
+
+AtrbFun = '=' Es 
+AtrbFun = ‘(‘ LArgs ’)’
 
 CondElse = 'else' '{' LInstruc }
 CondElse = &
@@ -65,7 +67,7 @@ Fa = '~' Fa
 Fa = '(' Es ')'
 Fa = Value
 
-Func = tkId ‘(‘ LArgs ’)’
+
 
 LArgs = Value LArgsT 
 LArgs = &
@@ -74,7 +76,7 @@ LArgsT = &
 
 Value = tkId
 Value = tkId '[' Es ']'
-Value = Func
+Value = tkId ‘(‘ LArgs ’)’
 Value = cInt
 Value = cFloat
 Value = cChar
