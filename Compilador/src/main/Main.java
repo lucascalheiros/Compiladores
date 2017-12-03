@@ -8,8 +8,9 @@ public class Main {
 	/*	Lexico analisador = new Lexico();
 		analisador.analise("resources/hello");
 		//*/
-		Sintatico analisador = new Sintatico("resources/fib");
+		Sintatico analisador = new Sintatico("resources/shell");
 		analisador.analise();
+		//*/
 	}
 
 }

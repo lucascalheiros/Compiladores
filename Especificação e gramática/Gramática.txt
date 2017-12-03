@@ -1,3 +1,5 @@
+Gramática LL(1) SPL
+
 S = 'func' LDeclFunc 'end' 'int' 'main' '(' LDeclArgs ')' '{' FuncBody '}' 
 
 LDeclFunc = DeclFunc LDeclFunc
@@ -16,16 +18,21 @@ LDecl = Decl ‘;’ LDecl
 LDecl = &	
 
 Decl = Type tkId 
-Decl = 'array' Type '[' cInt ']' tkId
+Decl = 'array' Type '[' ArrDeclNum ']' tkId
+
+ArrDeclNum = 'int'
+ArrDeclNum = &
 
 LInstruc = Instruc LInstruc
 LInstruc = &
 
-Instruc = tkId AtrbFun ';'
+Instruc = tkId Arr AtrbFun ';'
 Instruc = 'while' '(' Es ')' '{' LInstruc '}'
 Instruc = 'for' '(' tkId ':' Es ',' Es ')' '{' LInstruc '}'
 Instruc = 'return' Value ';'
 Instruc = 'if' '(' Es ')' '{' LInstruc '}' CondElse
+
+Arr = '[' Es ']'
 
 AtrbFun = '=' Es 
 AtrbFun = ‘(‘ LArgs ’)’
@@ -46,10 +53,15 @@ Tbr = '&' Fb Tbr
 Tbr = &
 
 Fb = '!' Fb
-Fb = Ec
+Fb = Ei
 
-Ec = Ea Opc Ea
-Ec = Ea
+Ei = Ec Eir
+Eir = Opi Ec
+Eir = &
+
+Ec = Ea Ecr
+Ecr = Opc Ea
+Ecr = &
 
 Ea = Er Ear
 Ear = Opa Er Ear
@@ -67,28 +79,23 @@ Fa = '~' Fa
 Fa = '(' Es ')'
 Fa = Value
 
-
-
-LArgs = Value LArgsT 
+LArgs = Es LArgsT 
 LArgs = &
-LArgsT = ',' Value LArgsT
+LArgsT = ',' Es LArgsT
 LArgsT = &
 
-Value = tkId
-Value = tkId '[' Es ']'
-Value = tkId ‘(‘ LArgs ’)’
+Value = tkId Valuer
 Value = cInt
 Value = cFloat
 Value = cChar
 Value = cString
 Value = cBool
 
+Valuer = '[' Es ']'
+Valuer = ‘(‘ LArgs ’)’
+
 Type = 'int'
 Type = 'float'
 Type = 'string'
 Type = 'char'
 Type = 'bool' 
-
-
-
-

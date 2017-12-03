@@ -50,7 +50,6 @@ public class TokensMap {
 		map.put("=", CategoriaToken.tkAtr);
 		map.put("return", CategoriaToken.tkReturn);
 
-
 	}
 
 	public static CategoriaToken getToken(String nome) {

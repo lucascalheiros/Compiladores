@@ -124,8 +124,8 @@ public class Lexico{
 					case "!=":
 					case ">=":
 					case "<=":
-						finalizaPalavra();
 						output.add(new Token(linha, colInicial, TokensMap.getToken(strPalavraAtual), strPalavraAtual));
+						finalizaPalavra();
 						proxChar();
 						continue;
 					case "//":
@@ -192,9 +192,6 @@ public class Lexico{
 			System.out.println("erro io");
 			return;
 		} 
-		for(Token t: output) {
-			System.out.println(t);
-		}
 	}
 	
 	public Token nextToken() {
